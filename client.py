@@ -2,32 +2,41 @@ import requests
 import Queue
 import threading
 
-def parsing(queue):
-    while True:
-        url = queue.get()
-        response = requests.get(url)
-        print response.status_code
-        print response.url
-        #print response.content
-        queue.task_done()
+class Parser:
+    def __init__(self, thread_count=4):
+        self.thread_count = thread_count
+        self.results = []
 
 
-urls = [
-        "http://stackoverflow.com/",
-        "https://www.jeffknupp.com/",
-        "https://khashtamov.com/",
-        "https://students.superjob.ru/"
-        ]
+    def parsing(self, queue):
+        while True:
+            url = queue.get()
+            try:
+                resp = requests.get(url)
+                dict_url = {}
+                dict_url["status code"] = resp.status_code
+                dict_url["url"] = resp.url
+                #dict_url["content"] = resp.content
+                self.results.append(dict_url)
+            except requests.RequestException as e:
+                dict_url = {}
+                dict_url["status code"] = -1
+                dict_url["url"] = url
+                dict_url["err"] = e
+                self.results.append(dict_url)
 
-q = Queue.Queue()
-for url in urls:
-    q.put(url)
+            queue.task_done()
 
-thread_count = 5
-for i in range(thread_count):
-    pill2kill = threading.Event()
-    t = threading.Thread(target=parsing, args=(q,))
-    t.daemon = True
-    t.start()
 
-q.join()
+    def get_pages(self, urls):
+        q = Queue.Queue()
+        for url in urls:
+            q.put(url)
+
+        for i in range(self.thread_count):
+            pill2kill = threading.Event()
+            t = threading.Thread(target=self.parsing, args=(q,))
+            t.start()
+
+        q.join()
+        return self.results
