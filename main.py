@@ -1,4 +1,5 @@
 from client import Parser
+import sys
 
 urls = [
         "http://stackoverflow.com/",
@@ -11,4 +12,4 @@ urls = [
 parser = Parser(5)
 lst = parser.get_pages(urls)
 for item in lst:
-	print item
+	print item, "\n"
