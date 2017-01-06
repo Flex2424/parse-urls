@@ -1,24 +1,31 @@
-import requests
-import Queue
 import threading
+try:
+    import Queue
+except ImportError:
+    import queue as Queue
+
+import requests
+
 
 class Parser:
     def __init__(self, thread_count=4):
         self.thread_count = thread_count
+        print "Threads count: ", self.thread_count
         self.results = []
-
 
     def parsing(self, queue):
         while True:
             url = queue.get()
+            print "current: [{0}]".format(url)
             try:
                 resp = requests.get(url)
                 dict_url = {}
                 dict_url["status code"] = resp.status_code
                 dict_url["url"] = resp.url
-                #dict_url["content"] = resp.content
+                # dict_url["content"] = resp.content
                 self.results.append(dict_url)
             except requests.RequestException as e:
+                print "exception with {0}".format(url)
                 dict_url = {}
                 dict_url["status code"] = -1
                 dict_url["url"] = url
@@ -26,8 +33,8 @@ class Parser:
                 self.results.append(dict_url)
 
             queue.task_done()
-            break
-
+            if queue.empty():
+                break
 
     def get_pages(self, urls):
         q = Queue.Queue()
