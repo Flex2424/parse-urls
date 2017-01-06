@@ -31,6 +31,4 @@ with Profiler() as p:
     print "Total url: ", len(urls)
     parser = Parser2(7)
     lst = parser.get_pages(urls)
-    print "len(lst): ", len(urls)
-    for item in lst:
-        print item
+    

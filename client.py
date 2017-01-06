@@ -22,7 +22,7 @@ class Parser:
                 dict_url = {}
                 dict_url["status code"] = resp.status_code
                 dict_url["url"] = resp.url
-                # dict_url["content"] = resp.content
+                dict_url["content"] = resp.content
                 self.results.append(dict_url)
             except requests.RequestException as e:
                 print "exception with {0}".format(url)
