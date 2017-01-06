@@ -13,5 +13,5 @@
 ##примечения
 Работоспособность проверена на Python 2.7 и 3.4.  
 В client2.py есть класс Profiler, он чисто для замера скорости.  
-В обоих классах есть метод get_pages, который возвращает список словарей. При успешной обработке url: {'status_code': <status code>, 'url': <url>, 'content': <content>}, при исключении: { 'status_code': -1, 'err': <error object>, 'url': <url>}.
+В обоих классах есть метод get_pages, который возвращает список словарей. При успешной обработке url: {'status_code': код, 'url': url, 'content': content}, при исключении: { 'status_code': -1, 'err': объект исключения, 'url': url}.
 
