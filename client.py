@@ -26,6 +26,7 @@ class Parser:
                 self.results.append(dict_url)
 
             queue.task_done()
+            break
 
 
     def get_pages(self, urls):
@@ -33,10 +34,14 @@ class Parser:
         for url in urls:
             q.put(url)
 
+        wait_for_threads = []
+
         for i in range(self.thread_count):
-            pill2kill = threading.Event()
             t = threading.Thread(target=self.parsing, args=(q,))
             t.start()
+            wait_for_threads.append(t)
 
-        q.join()
+        for thread in wait_for_threads:
+            thread.join()
+
         return self.results
